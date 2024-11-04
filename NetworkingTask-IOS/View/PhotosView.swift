@@ -16,12 +16,15 @@ class PhotosView: UIViewController {
         
         setUpTableView()
         
-        photosViewModel.getImages()
-        photosViewModel.success = {
-            self.tableView.reloadData()
-        }
-        photosViewModel.failure = { error in
-                print(error)
+        photosViewModel.getImages { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
         }
         
         

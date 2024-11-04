@@ -14,16 +14,20 @@ class UsersView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        userViewModel.getUsers()
-        userViewModel.success = {
-            self.tableView.reloadData()
-        }
-        userViewModel.failure = { error in
-            print(error)
+        setupTableView()
+
+        userViewModel.getUsers { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
             
         }
-        setupTableView()
+       
         
     }
     func setupTableView() {

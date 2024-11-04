@@ -7,21 +7,25 @@
 
 import Foundation
 
-class PostsViewModel {
+class PostsViewModel : PostViewModelProtocol {
+   
+    
     var posts: [Post] = []
     let manager = PostManager()
-    
-    var success: (() -> Void)?
-    var failure: ((String) -> Void)?
-    
-    func getPosts() {
-        manager.getPostItems { items, error in
-            if let error {
-                self.failure?(error.localizedDescription)
-            } else if let items {
-                self.posts = items
-                self.success?()
+    func getPosts(completion: @escaping (Result<[Post], any Error>) -> Void) {
+        manager.getPostItems { items , error in
+            
+            if let data = items {
+                self.posts = data
+                completion(.success(data))
+
             }
+            else if let error {
+                completion(.failure(error.localizedDescription as! Error))
+            }
+            
         }
+
     }
+    
 }

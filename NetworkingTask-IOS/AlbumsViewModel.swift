@@ -6,24 +6,28 @@
 //
 
 import Foundation
-class AlbumsViewModel{
+class AlbumsViewModel : AlbumViewModelProtocol{
+   
+    
     var album : [Albums] = []
     var albumManager = AlbumManager()
-    var success : (()->Void)?
-    var failure : ((String)->Void)?
-    
-    func getData() {
-        albumManager.getAlbums { items,error in
-            if let items {
-                self.album = items
-                self.success?()
-                
-            } else if let error {
-                self.failure?(error.localizedDescription)
+
+    func getData(completion: @escaping (Result<[Albums], any Error>) -> Void) {
+        albumManager.getAlbums { items , error in
+            
+            if let data = items {
+                self.album = data
+                completion(.success(data))
+
+            }
+            else if let error {
+                completion(.failure(error.localizedDescription as! Error))
             }
             
         }
+
     }
+   
 }
 
 

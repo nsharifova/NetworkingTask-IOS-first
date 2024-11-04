@@ -16,12 +16,16 @@ class PostView: UIViewController {
         super.viewDidLoad()
         setupTableView()
         
-        postsViewModel.getPosts()
-        postsViewModel.failure = { error in
-            print(error)
-        }
-        postsViewModel.success = {
-            self.tableView.reloadData()
+        postsViewModel.getPosts { result in
+            DispatchQueue.main.async {
+                switch result {
+                    
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
         }
     }
     func setupTableView() {

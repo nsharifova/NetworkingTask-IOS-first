@@ -6,21 +6,25 @@
 //
 
 import Foundation
-class CommentsViewModel {
+class CommentsViewModel : CommentViewModelProtocol {
+  
+    
     var comment = [Comment]()
     let manager = PostManager()
-    var success: (() -> Void)?
-    var failure: ((String) -> Void)?
-    
-    func getComment(id: Int){
-        manager.getPostComments(id:id) { items, error in
-            if let error {
-                self.failure?(error.localizedDescription)
-            } else if let items {
-                self.comment = items
-                self.success?()
+    func getComment(id: Int, completion: @escaping (Result<[Comment], any Error>) -> Void) {
+        manager.getPostComments(id:id) { items , error in
+            
+            if let data = items {
+                self.comment = data
+                completion(.success(data))
+
             }
+            else if let error {
+                completion(.failure(error.localizedDescription as! Error))
+            }
+            
         }
-        
+
     }
+  
 }

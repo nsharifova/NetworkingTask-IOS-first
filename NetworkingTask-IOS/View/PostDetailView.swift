@@ -20,13 +20,19 @@ class PostDetailView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        commentsViewModel.getComment(id: post?.id ?? 0)
-        commentsViewModel.success = {
-            self.tableView.reloadData()
+        commentsViewModel.getComment(id: post?.id ?? 0) {
+            result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+            
         }
-        commentsViewModel.failure = { error in
-            print(error)
-        }
+        
         setUpView()
     }
     

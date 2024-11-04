@@ -16,12 +16,15 @@ class AlbumsView: UIViewController {
         super.viewDidLoad()
         setupTableView()
         
-        albumsViewModel.getData()
-        albumsViewModel.success = {
-            self.tableView.reloadData()
-        }
-        albumsViewModel.failure = { error in
-            print(error)
+        albumsViewModel.getData { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
         }
         
     }

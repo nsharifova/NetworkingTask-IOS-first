@@ -6,25 +6,30 @@
 //
 
 import Foundation
-class PhotosViewModel {
+class PhotosViewModel:PhotoViewModelProtocol {
+    
+    
     var photos : [Photo] = []
     var photoManager = PhotoManager()
-    var success : (()->Void)?
-    var failure : ((String)->Void)?
-    
-    func getImages() {
-        photoManager.getPhotos {items,error in
-            if let items {
-                self.photos = items
-                self.success?()
+
+    func getImages(completion: @escaping (Result<[Photo], any Error>) -> Void) {
+        photoManager.getPhotos { items , error in
+            
+            if let data = items {
+                self.photos = data
+                completion(.success(data))
+
             }
             else if let error {
-                self.failure?(error.localizedDescription)
+                completion(.failure(error.localizedDescription as! Error))
             }
+            
         }
-        
+
     }
-}
+    }
+   
+
 
 
 

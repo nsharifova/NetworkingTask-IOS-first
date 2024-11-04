@@ -7,22 +7,24 @@
 
 import Foundation
 
-class UsersViewModel {
-    var users = [User]()
+class UsersViewModel : UserViewModelProtocol {
+    var users : [User] = []
     var userManager = UserManager()
-    var success : (()->Void)?
-    var failure : ((String)->Void)?
     
-    func getUsers() {
+    func getUsers(completion: @escaping (Result<[User], any Error>) -> Void) {
         userManager.getUsers { items , error in
-            if let items {
-                self.users = items
-                self.success?()
+            
+            if let data = items {
+                self.users = data
+                completion(.success(data))
+
+
             }
             else if let error {
-                self.failure?(error.localizedDescription)
+                completion(.failure(error.localizedDescription as! Error))
             }
             
         }
     }
+    
 }
